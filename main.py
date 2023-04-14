@@ -54,7 +54,10 @@ def main():
     gen_index(lang)
     # gen diff
     set_safe_git_dir()
-    _check_call(["srctx", "diff", "--src", user_dir, "--before", before_sha, "--after", after_sha])
+    _check_call(["srctx", "diff",
+                 "--src", user_dir,
+                 "--before", before_sha,
+                 "--after", after_sha])
 
 
 if __name__ == "__main__":
