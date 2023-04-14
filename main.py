@@ -25,7 +25,7 @@ def gen_golang_index():
 
 
 def gen_py_index():
-    _check_call(["lsif-py", "."])
+    _check_call(["lsif-py", ".", "-o", "./dump.lsif"])
 
 
 def _check_call(commands: list):
