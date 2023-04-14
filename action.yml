@@ -6,8 +6,18 @@ inputs:
     description: 'language of your repo'
     required: true
     default: 'python'
+  after_sha:
+    description: 'after sha'
+    required: true
+    default: ${{ github.sha }}
+  before_sha:
+    description: 'before sha'
+    required: true
+    default: ${{ github.event.before }}
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.lang }}
+    - ${{ inputs.before_sha }}
+    - ${{ inputs.after_sha }}
