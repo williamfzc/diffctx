@@ -7,6 +7,7 @@ from comment import send_comment
 
 user_dir = "/github/workspace"
 support_langs = {"golang", "python"}
+csv_result = "./output.csv"
 
 
 def gen_index(lang: str):
@@ -51,8 +52,15 @@ def gen_diff(before_sha: str, after_sha: str):
             before_sha,
             "--after",
             after_sha,
+            "--outputCsv",
+            csv_result,
         ]
     )
+
+
+def process_with_ai(raw: str) -> str:
+    # todo
+    return raw
 
 
 def main():
@@ -62,6 +70,7 @@ def main():
     after_sha = args[2]
     repo_token = args[3]
     issue_number = args[4]
+    openai_api_key = args[5]
 
     # check
     if lang not in support_langs:
@@ -79,7 +88,15 @@ def main():
     gen_index(lang)
     gen_diff(before_sha, after_sha)
 
-    files = os.listdir(".")
+    with open(csv_result, encoding="utf-8") as f:
+        content = f.read()
+
+    if not openai_api_key:
+        logger.warning("no openai api key found. Use raw data.")
+    else:
+        logger.info("process with openai")
+        content = process_with_ai(content)
+    logger.info(f"reply content: {content}")
 
     # feedback
     if not issue_number:
@@ -87,7 +104,11 @@ def main():
         return
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
-    send_comment(repo_token, repo_name, int(issue_number), f"hi from github action: {files}")
+    send_comment(repo_token, repo_name, int(issue_number), f"""
+## DiffCtx Feedback
+
+{content} 
+""")
 
 
 if __name__ == "__main__":
