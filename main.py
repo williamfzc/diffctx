@@ -86,6 +86,8 @@ def main():
         logger.warning("This action is not triggered by a PR. Will not leave any comments.")
         return
 
+    # a random edit for test
+
     repo_name = os.getenv("GITHUB_REPOSITORY")
     send_comment(repo_token, repo_name, int(issue_number), f"hi from github action: {files}")
 
