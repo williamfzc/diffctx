@@ -147,6 +147,7 @@ def main():
     if not issue_number:
         logger.warning("This action is not triggered by a PR. Will not leave any comments.")
         return
+    logger.info("random edit")
     send_comment(repo_token, repo_name, int(issue_number), final_content)
 
 
