@@ -14,6 +14,7 @@ csv_result_file = "./output.csv"
 
 
 def gen_index(lang: str):
+    set_safe_git_dir()
     files = os.listdir(user_dir)
     logger.info(f"files: {files}")
 
@@ -91,7 +92,7 @@ Empty report means that there are no dangerous changes.
 
 
 def convert_csv_to_md(csv_file) -> str:
-    with open(csv_file, 'rU') as f:
+    with open(csv_file, 'r') as f:
         markdown_table = csv_to_table(f, ",")
         md_table_raw = md_table(markdown_table)
     return md_table_raw
