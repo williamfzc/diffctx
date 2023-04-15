@@ -61,7 +61,7 @@ def main():
     before_sha = args[1]
     after_sha = args[2]
     repo_token = args[3]
-    issue_id = args[4]
+    issue_number = args[4]
 
     # check
     if lang not in support_langs:
@@ -82,8 +82,12 @@ def main():
     files = os.listdir(".")
 
     # feedback
+    if not issue_number:
+        logger.warning("This action is not triggered by a PR. Will not leave any comments.")
+        return
+
     repo_name = os.getenv("GITHUB_REPOSITORY")
-    send_comment(repo_token, repo_name, int(issue_id), f"hi from github action: {files}")
+    send_comment(repo_token, repo_name, int(issue_number), f"hi from github action: {files}")
 
 
 if __name__ == "__main__":
