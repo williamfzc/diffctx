@@ -75,6 +75,7 @@ Some descriptions:
 
 Here is a csv report below for a specific commit.
 Evaluate it and indicate what reviewers should care.
+Empty report means that there are no dangerous changes.
 
 --- report start ---
 
