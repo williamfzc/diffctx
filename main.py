@@ -61,25 +61,16 @@ def gen_diff(before_sha: str, after_sha: str):
 
 
 def process_with_ai(raw: str) -> str:
-    prompt = f"""
+    req = f"""
 You are a bot for helping code review. Describe this report:
 
 {raw}
 """
 
-    models = openai.Model.list()
-    chosen_model = models.data[0].id
-
-    response = openai.Completion.create(
-        engine=chosen_model,
-        prompt=prompt,
-        max_tokens=60,
-        n=1,
-        stop=None,
-        temperature=0.7,
-    )
-    message = response.choices[0].text.strip()
-    return message
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role": "user", "content": req}])
+    return completion.choices[0].message.content
 
 
 def main():
