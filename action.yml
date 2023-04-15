@@ -24,7 +24,7 @@ inputs:
     required: false
   openai_api_key:
     description: "api key for openai"
-    default: "${{ secrets.OPENAI_API_KEY }}"
+    default: ""
     required: false
 runs:
   using: 'docker'

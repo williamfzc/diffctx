@@ -17,3 +17,4 @@ jobs:
         uses: ./
         with:
           lang: "python"
+          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
