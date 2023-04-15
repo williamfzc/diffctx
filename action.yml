@@ -1,6 +1,9 @@
 # action.yml
-name: 'diff ctx'
-description: 'Diff Context'
+name: 'diffctx'
+description: 'Smart diff context analysis powered by GPT + LSIF'
+branding:
+  color: 'green'
+  icon: 'at-sign'
 inputs:
   lang:
     description: 'language of your repo'
