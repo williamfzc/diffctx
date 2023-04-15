@@ -1,6 +1,8 @@
 import os
 import subprocess
 import sys
+
+import openai
 from loguru import logger
 
 from comment import send_comment
@@ -59,8 +61,25 @@ def gen_diff(before_sha: str, after_sha: str):
 
 
 def process_with_ai(raw: str) -> str:
-    # todo
-    return raw
+    prompt = f"""
+You are a bot for helping code review. Describe this report:
+
+{raw}
+"""
+
+    models = openai.Model.list()
+    chosen_model = models.data[0].id
+
+    response = openai.Completion.create(
+        engine=chosen_model,
+        prompt=prompt,
+        max_tokens=60,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
+    message = response.choices[0].text.strip()
+    return message
 
 
 def main():
@@ -95,6 +114,7 @@ def main():
         logger.warning("no openai api key found. Use raw data.")
     else:
         logger.info("process with openai")
+        openai.api_key = openai_api_key
         content = process_with_ai(content)
     logger.info(f"reply content: {content}")
 
