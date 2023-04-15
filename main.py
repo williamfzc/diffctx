@@ -4,12 +4,13 @@ import sys
 
 import openai
 from loguru import logger
+from csvtomd import csv_to_table, md_table
 
 from comment import send_comment
 
 user_dir = "/github/workspace"
 support_langs = {"golang", "python"}
-csv_result = "./output.csv"
+csv_result_file = "./output.csv"
 
 
 def gen_index(lang: str):
@@ -55,7 +56,7 @@ def gen_diff(before_sha: str, after_sha: str):
             "--after",
             after_sha,
             "--outputCsv",
-            csv_result,
+            csv_result_file,
         ]
     )
 
@@ -83,6 +84,13 @@ Help me evaluate it and indicate what reviewers should care:
     return completion.choices[0].message.content
 
 
+def convert_csv_to_md(csv_file) -> str:
+    with open(csv_file, 'rU') as f:
+        markdown_table = csv_to_table(f, ",")
+        md_table_raw = md_table(markdown_table)
+    return md_table_raw
+
+
 def main():
     args = sys.argv[1:]
     lang = args[0]
@@ -108,28 +116,38 @@ def main():
     gen_index(lang)
     gen_diff(before_sha, after_sha)
 
-    with open(csv_result, encoding="utf-8") as f:
+    with open(csv_result_file, encoding="utf-8") as f:
         content = f.read()
 
+    ai_content = ""
     if not openai_api_key:
         logger.warning("no openai api key found. Use raw data.")
     else:
         logger.info("process with openai")
         openai.api_key = openai_api_key
-        content = process_with_ai(content)
-    logger.info(f"reply content: {content}")
+        ai_content = process_with_ai(content)
+
+    repo_name = os.getenv("GITHUB_REPOSITORY")
+    md_table_raw = convert_csv_to_md(csv_result_file)
+
+    final_content = f"""
+## DiffCtx Feedback
+
+{ai_content} 
+
+<details><summary>Details</summary>
+
+{md_table_raw}
+
+</details>
+"""
+    logger.info(f"final comment: {final_content}")
 
     # feedback
     if not issue_number:
         logger.warning("This action is not triggered by a PR. Will not leave any comments.")
         return
-
-    repo_name = os.getenv("GITHUB_REPOSITORY")
-    send_comment(repo_token, repo_name, int(issue_number), f"""
-## DiffCtx Feedback
-
-{content} 
-""")
+    send_comment(repo_token, repo_name, int(issue_number), final_content)
 
 
 if __name__ == "__main__":
