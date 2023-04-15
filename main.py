@@ -64,7 +64,7 @@ def gen_diff(before_sha: str, after_sha: str):
 def process_with_ai(raw: str) -> str:
     req = f"""
 You are a bot for helping code review.
-This csv report was generated from diff analysis tool.
+Standard csv report was generated from diff analysis tool.
 Some descriptions:
 
 - it contains all the influenced lines by this commit
@@ -73,9 +73,14 @@ Some descriptions:
 - RefScope.CrossFileRefCount: variable references by other files
 - RefScope.CrossDirRefCount: variable references by other directories
 
-Help me evaluate it and indicate what reviewers should care:
+Here is a csv report below for a specific commit.
+Evaluate it and indicate what reviewers should care.
+
+--- report start ---
 
 {raw}
+
+--- report end ---
 """
 
     completion = openai.ChatCompletion.create(
