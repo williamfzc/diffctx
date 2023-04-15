@@ -139,7 +139,7 @@ def main():
     md_table_raw = convert_csv_to_md(csv_result_file)
 
     final_content = f"""
-## DiffCtx Feedback
+## DiffCtx Report
 
 {ai_content} 
 
