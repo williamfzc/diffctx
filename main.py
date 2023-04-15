@@ -76,6 +76,7 @@ Some descriptions:
 
 Here is a csv report below for a specific commit.
 Evaluate it and indicate what reviewers should care.
+All the file paths should be wrapped with markdown link for navigation.
 Empty report means that there are no dangerous changes.
 
 --- report start ---
