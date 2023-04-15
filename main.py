@@ -62,7 +62,17 @@ def gen_diff(before_sha: str, after_sha: str):
 
 def process_with_ai(raw: str) -> str:
     req = f"""
-You are a bot for helping code review. Describe this report:
+You are a bot for helping code review.
+This csv report was generated from diff analysis tool.
+Some descriptions:
+
+- it contains all the influenced lines by this commit
+- each row = each line
+- RefScope.TotalRefCount: total variable references in this line
+- RefScope.CrossFileRefCount: variable references by other files
+- RefScope.CrossDirRefCount: variable references by other directories
+
+Help me evaluate it and indicate what reviewers should care:
 
 {raw}
 """
