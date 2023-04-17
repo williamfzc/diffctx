@@ -1,5 +1,9 @@
+import typing
+
 from github import Github
 from loguru import logger
+
+from object import LineStat
 
 
 def send_comment(token: str, repo_id: str, issue_number: int, content: str):
@@ -16,3 +20,20 @@ def send_comment(token: str, repo_id: str, issue_number: int, content: str):
 
     # no existed comment
     pr.create_issue_comment(content)
+
+
+def send_code_comments(token: str, repo_id: str, issue_number: int, lines: typing.List[LineStat]):
+    g = Github(token)
+    repo = g.get_repo(repo_id)
+    pr = repo.get_pull(issue_number)
+
+    commit = pr.get_commits()[0]
+    for each_line in lines:
+        if each_line.refScope.crossFileRefCount > 0:
+            logger.info(f"leave comment in {each_line.fileScope.fileName} #{each_line.fileScope.lineNumber}")
+            pr.create_comment(
+                f"[diffctx] cross file reference: {each_line.refScope.crossFileRefCount}",
+                commit,
+                each_line.fileScope.fileName,
+                each_line.fileScope.lineNumber,
+            )

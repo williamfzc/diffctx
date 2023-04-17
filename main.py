@@ -1,16 +1,21 @@
 import os
+import pathlib
 import subprocess
 import sys
+import typing
 
 import openai
-from loguru import logger
 from csvtomd import csv_to_table, md_table
+from loguru import logger
+from pydantic import parse_file_as
 
-from comment import send_comment
+from comment import send_comment, send_code_comments
+from object import LineStat
 
 user_dir = "/github/workspace"
 support_langs = {"golang", "python"}
 csv_result_file = "./output.csv"
+json_result_file = "./output.json"
 
 
 def gen_index(lang: str):
@@ -58,6 +63,8 @@ def gen_diff(before_sha: str, after_sha: str):
             after_sha,
             "--outputCsv",
             csv_result_file,
+            "--outputJson",
+            json_result_file,
         ]
     )
 
@@ -75,7 +82,7 @@ Some descriptions:
 - RefScope.CrossDirRefCount: variable references by other directories
 
 Here is a csv report below for a specific commit.
-Evaluate it and indicate what reviewers should care.
+Evaluate it and indicate the most important parts which reviewers should care.
 All the file paths should be wrapped with markdown link for navigation.
 Empty report means that there are no dangerous changes.
 
@@ -156,6 +163,10 @@ def main():
         logger.warning("This action is not triggered by a PR. Will not leave any comments.")
         return
     send_comment(repo_token, repo_name, int(issue_number), final_content)
+
+    # code comments
+    lines = parse_file_as(typing.List[LineStat], pathlib.Path(json_result_file))
+    send_code_comments(repo_token, repo_name, int(issue_number), lines)
 
 
 if __name__ == "__main__":

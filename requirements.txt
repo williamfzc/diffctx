@@ -2,3 +2,4 @@ loguru==0.7.0
 PyGithub==1.58.1
 openai==0.27.4
 csvtomd==0.3.0
+pydantic~=1.7.3
