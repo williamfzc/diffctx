@@ -13,5 +13,4 @@ class ReferenceScope(BaseModel):
 class LineStat(BaseModel):
     fileName: str
     lineNumber: int
-    random: bool
     refScope: ReferenceScope = Field(alias="ref")
