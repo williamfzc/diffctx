@@ -1,10 +1,4 @@
-from pydantic import BaseModel
-
-
-class FileScope(BaseModel):
-    fileName: str
-    lineNumber: int
-    random: bool
+from pydantic import BaseModel, Field
 
 
 class ReferenceScope(BaseModel):
@@ -17,5 +11,7 @@ class ReferenceScope(BaseModel):
 
 
 class LineStat(BaseModel):
-    fileScope: FileScope
-    refScope: ReferenceScope
+    fileName: str
+    lineNumber: int
+    random: bool
+    refScope: ReferenceScope = Field(alias="ref")
