@@ -166,7 +166,7 @@ def main():
 
     # code comments
     lines = parse_file_as(typing.List[LineStat], pathlib.Path(json_result_file))
-    send_code_comments(repo_token, repo_name, int(issue_number), lines)
+    send_code_comments(repo_token, after_sha, repo_name, int(issue_number), lines)
 
 
 if __name__ == "__main__":

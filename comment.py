@@ -22,18 +22,19 @@ def send_comment(token: str, repo_id: str, issue_number: int, content: str):
     pr.create_issue_comment(content)
 
 
-def send_code_comments(token: str, repo_id: str, issue_number: int, lines: typing.List[LineStat]):
+def send_code_comments(token: str, commit_id: str, repo_id: str, issue_number: int, lines: typing.List[LineStat]):
     g = Github(token)
     repo = g.get_repo(repo_id)
     pr = repo.get_pull(issue_number)
 
-    commit = pr.get_commits()[0]
+    target = repo.get_commit(commit_id)
+    logger.info(f"target commit: {target}")
     for each_line in lines:
         if each_line.refScope.crossFileRefCount > 0:
-            logger.info(f"leave comment in {each_line.fileName} #{each_line.lineNumber}")
-            pr.create_comment(
+            logger.info(f"leave comment in {each_line.fileName} L{each_line.lineNumber}")
+            pr.create_review_comment(
                 f"[diffctx] cross file reference: {each_line.refScope.crossFileRefCount}",
-                commit,
+                target,
                 each_line.fileName,
                 each_line.lineNumber,
             )
