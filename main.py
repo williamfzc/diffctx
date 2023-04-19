@@ -94,13 +94,13 @@ Empty report means that there are no dangerous changes.
 """
 
     completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": req}])
+        model="gpt-3.5-turbo", messages=[{"role": "user", "content": req}]
+    )
     return completion.choices[0].message.content
 
 
 def convert_csv_to_md(csv_file) -> str:
-    with open(csv_file, 'r') as f:
+    with open(csv_file, "r") as f:
         markdown_table = csv_to_table(f, ",")
         md_table_raw = md_table(markdown_table)
     return md_table_raw
@@ -160,7 +160,9 @@ def main():
 
     # feedback
     if not issue_number:
-        logger.warning("This action is not triggered by a PR. Will not leave any comments.")
+        logger.warning(
+            "This action is not triggered by a PR. Will not leave any comments."
+        )
         return
     send_comment(repo_token, repo_name, int(issue_number), final_content)
 
