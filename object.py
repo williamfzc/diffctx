@@ -7,7 +7,11 @@ class ReferenceScope(BaseModel):
     crossDirRefCount: int
 
     def is_safe(self):
-        return self.totalRefCount == 0 and self.crossFileRefCount == 0 and self.crossDirRefCount == 0
+        return (
+            self.totalRefCount == 0
+            and self.crossFileRefCount == 0
+            and self.crossDirRefCount == 0
+        )
 
 
 class LineStat(BaseModel):
