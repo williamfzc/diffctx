@@ -26,11 +26,11 @@ def send_comment(token: str, repo_id: str, issue_number: int, content: str):
 
 
 def send_code_comments(
-        token: str,
-        commit_id: str,
-        repo_id: str,
-        issue_number: int,
-        lines: typing.List[LineStat],
+    token: str,
+    commit_id: str,
+    repo_id: str,
+    issue_number: int,
+    lines: typing.List[LineStat],
 ):
     gg = Github3(token=token)
     owner, cur_repo = repo_id.split("/")
@@ -45,9 +45,12 @@ def send_code_comments(
             logger.info(
                 f"leave comment in {each_line.fileName} L{each_line.lineNumber}"
             )
-            pr.create_review_comment(
-                f"[diffctx] cross file reference: {each_line.refScope.crossFileRefCount}",
-                commit_id,
-                each_line.fileName,
-                each_line.lineNumber,
-            )
+            # todo: 443 failed
+            # https://github.com/PyGithub/PyGithub/issues/2501
+
+            # pr.create_review_comment(
+            #     f"[diffctx] cross file reference: {each_line.refScope.crossFileRefCount}",
+            #     commit_id,
+            #     each_line.fileName,
+            #     each_line.lineNumber,
+            # )

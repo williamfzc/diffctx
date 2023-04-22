@@ -80,6 +80,9 @@ Some descriptions:
 - RefScope.TotalRefCount: total variable references in this line
 - RefScope.CrossFileRefCount: variable references by other files
 - RefScope.CrossDirRefCount: variable references by other directories
+- FuncRefScope.TotalFuncRefCount: total functions influenced by this line
+- FuncRefScope.CrossFuncFileRefCount: functions in other files influenced by this line
+- FUncRefScope.crossFuncDirRefCount: functions in other dirs influenced by this line
 
 Here is a csv report below for a specific commit.
 Evaluate it and indicate the most important parts which reviewers should care.

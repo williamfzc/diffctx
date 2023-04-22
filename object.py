@@ -6,15 +6,15 @@ class ReferenceScope(BaseModel):
     crossFileRefCount: int
     crossDirRefCount: int
 
-    def is_safe(self):
-        return (
-            self.totalRefCount == 0
-            and self.crossFileRefCount == 0
-            and self.crossDirRefCount == 0
-        )
+
+class FuncReferenceScope(BaseModel):
+    totalFuncRefCount: int
+    crossFuncFileRefCount: int
+    crossFuncDirRefCount: int
 
 
 class LineStat(BaseModel):
     fileName: str
     lineNumber: int
     refScope: ReferenceScope = Field(alias="ref")
+    funcScope: FuncReferenceScope = Field(alias="funcRef")

@@ -1,4 +1,4 @@
-FROM williamfzc/srctx:v0.2.1
+FROM williamfzc/srctx:v0.3.3
 
 RUN apk add --no-cache python3 py3-pip
 
