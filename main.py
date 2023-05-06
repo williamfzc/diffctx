@@ -1,3 +1,4 @@
+import csv
 import os
 import pathlib
 import subprocess
@@ -63,8 +64,6 @@ def gen_diff(before_sha: str, after_sha: str):
             after_sha,
             "--outputCsv",
             csv_result_file,
-            "--outputJson",
-            json_result_file,
         ]
     )
 
@@ -73,20 +72,9 @@ def process_with_ai(raw: str) -> str:
     req = f"""
 You are a bot for helping code review.
 Standard csv report was generated from diff analysis tool.
-Some descriptions:
-
-- it contains all the influenced lines by this commit
-- each row = each line
-- RefScope.TotalRefCount: total variable references in this line
-- RefScope.CrossFileRefCount: variable references by other files
-- RefScope.CrossDirRefCount: variable references by other directories
-- FuncRefScope.TotalFuncRefCount: total functions influenced by this line
-- FuncRefScope.CrossFuncFileRefCount: functions in other files influenced by this line
-- FUncRefScope.crossFuncDirRefCount: functions in other dirs influenced by this line
 
 Here is a csv report below for a specific commit.
 Evaluate it and indicate the most important parts which reviewers should care.
-All the file paths should be wrapped with markdown link for navigation.
 Empty report means that there are no dangerous changes.
 
 --- report start ---
@@ -107,6 +95,33 @@ def convert_csv_to_md(csv_file) -> str:
         markdown_table = csv_to_table(f, ",")
         md_table_raw = md_table(markdown_table)
     return md_table_raw
+
+
+def process_csv(csv_file):
+    cols = [
+        "fileName",
+        "affectedLinePercent",
+        "affectedFunctionPercent",
+        "affectedReferencePercent",
+    ]
+    origin_cols = cols[:1]
+    data_cols = cols[1:]
+
+    with open(csv_file, newline='') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+
+    with open(csv_file, "w", newline='') as f:
+        writer = csv.DictWriter(f, fieldnames=cols)
+        writer.writeheader()
+        for each_row in rows:
+            row_dict = dict()
+            for each_col in origin_cols:
+                row_dict[each_col] = each_row[each_col]
+            for each_col in data_cols:
+                row_dict[each_col] = f"{round(float(each_row[each_col]) * 100, 2)}%"
+
+            writer.writerow(row_dict)
 
 
 def main():
@@ -137,7 +152,7 @@ def main():
     with open(csv_result_file, encoding="utf-8") as f:
         content = f.read()
 
-    ai_content = ""
+    ai_content = "-"
     if not openai_api_key:
         logger.warning("no openai api key found. Use raw data.")
     else:
@@ -145,19 +160,17 @@ def main():
         openai.api_key = openai_api_key
         ai_content = process_with_ai(content)
 
+    # todo: add to feedback?
+    logger.info(f"ai resp: {ai_content}")
+
     repo_name = os.getenv("GITHUB_REPOSITORY")
+    process_csv(csv_result_file)
     md_table_raw = convert_csv_to_md(csv_result_file)
 
     final_content = f"""
 ## DiffCtx Report
 
-{ai_content} 
-
-<details><summary>Details</summary>
-
 {md_table_raw}
-
-</details>
 """
     logger.info(f"final comment: {final_content}")
 
