@@ -1,3 +1,4 @@
+import base64
 import csv
 import json
 import os
@@ -15,6 +16,7 @@ user_dir = "/github/workspace"
 support_langs = {"golang", "python"}
 csv_result_file = "./output.csv"
 json_result_file = "./output.json"
+dot_result_file = "./output.dot"
 
 
 def gen_index(lang: str):
@@ -64,6 +66,8 @@ def gen_diff(before_sha: str, after_sha: str):
             csv_result_file,
             "--outputJson",
             json_result_file,
+            "--outputDot",
+            dot_result_file,
         ]
     )
 
@@ -132,6 +136,13 @@ def process_json(input_json, output_csv):
             writer.writerow(row)
 
 
+def dot_to_svg_tag(dot_file):
+    svg_bytes = subprocess.check_output(["dot", "-Tsvg", dot_file])
+    svg_base64 = base64.b64encode(svg_bytes).decode()
+    svg = f'<img src="data:image/svg+xml;base64,{svg_base64}"/>'
+    return svg
+
+
 def main():
     args = sys.argv[1:]
     lang = args[0]
@@ -172,11 +183,14 @@ def main():
     logger.info(f"ai resp: {ai_content}")
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
-    process_json(csv_result_file)
+    process_json(json_result_file, csv_result_file)
     md_table_raw = convert_csv_to_md(csv_result_file)
+    svg_tag = dot_to_svg_tag(dot_result_file)
 
     final_content = f"""
 ## [DiffCtx](https://github.com/williamfzc/diffctx) Report
+
+{svg_tag}
 
 {md_table_raw}
 """

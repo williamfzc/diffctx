@@ -1,6 +1,6 @@
-FROM williamfzc/srctx:v0.4.1
+FROM williamfzc/srctx:v0.4.2
 
-RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache python3 py3-pip graphviz
 
 COPY . /action_internal
 
