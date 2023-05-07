@@ -1,4 +1,3 @@
-import base64
 import csv
 import json
 import os
@@ -6,6 +5,7 @@ import subprocess
 import sys
 
 import openai
+import requests
 from csvtomd import csv_to_table, md_table
 from loguru import logger
 
@@ -136,11 +136,9 @@ def process_json(input_json, output_csv):
             writer.writerow(row)
 
 
-def dot_to_svg_tag(dot_file):
+def dot_to_svg(dot_file):
     svg_bytes = subprocess.check_output(["dot", "-Tsvg", dot_file])
-    svg_base64 = base64.b64encode(svg_bytes).decode()
-    svg = f'<img src="data:image/svg+xml;base64,{svg_base64}"/>'
-    return svg
+    return svg_bytes
 
 
 def main():
@@ -185,12 +183,19 @@ def main():
     repo_name = os.getenv("GITHUB_REPOSITORY")
     process_json(json_result_file, csv_result_file)
     md_table_raw = convert_csv_to_md(csv_result_file)
-    svg_tag = dot_to_svg_tag(dot_result_file)
+
+    # graph
+    svg_bytes = dot_to_svg(dot_result_file)
+    response = requests.post("https://sm.ms/api/v2/upload", files={"smfile": svg_bytes})
+    if response.status_code == 200:
+        url = response.json()["data"]["url"]
+    else:
+        url = None
 
     final_content = f"""
 ## [DiffCtx](https://github.com/williamfzc/diffctx) Report
 
-{svg_tag}
+{url}
 
 {md_table_raw}
 """
