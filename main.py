@@ -116,6 +116,8 @@ def process_json(input_json, output_csv):
         file.affectedFunctionPercentRepr = format_percentage(file.affectedFunctions, file.totalFunctions)
         file.affectedReferencePercentRepr = format_percentage(file.affectedReferences, file.totalReferences)
 
+    file_list.files = sort_files_by_impact(file_list.files)
+
     cols = [
         "FileName",
         "AffectedLines",
@@ -139,6 +141,13 @@ def process_json(input_json, output_csv):
 def dot_to_svg(dot_file):
     svg_bytes = subprocess.check_output(["dot", "-Tsvg", dot_file])
     return svg_bytes
+
+
+def sort_files_by_impact(files):
+    def sort_key(f):
+        return f.affectedLines
+
+    return sorted(files, key=sort_key, reverse=True)
 
 
 def main():
@@ -186,16 +195,10 @@ def main():
 
     # graph
     svg_bytes = dot_to_svg(dot_result_file)
-    response = requests.post("https://sm.ms/api/v2/upload", files={"smfile": svg_bytes})
-    if response.status_code == 200:
-        url = response.json()["data"]["url"]
-    else:
-        url = None
+    # todo: have no idea about how to display this graph in comment without any extra servers
 
     final_content = f"""
 ## [DiffCtx](https://github.com/williamfzc/diffctx) Report
-
-{url}
 
 {md_table_raw}
 """
