@@ -1,8 +1,8 @@
 # diffctx = diff context
 
-## Showcase
+A GitHub action for automatically evaluating the function level impacts of Pull Requests.
 
-<img width="697" alt="image" src="https://user-images.githubusercontent.com/13421694/236666915-5d403e4a-9cc1-4364-afbe-363cf82e5e49.png">
+## Showcase
 
 With a simple setup in your GitHub Action:
 
@@ -17,6 +17,10 @@ Diffctx will automatically analyse the diff (**and the context of diff**) every 
 comments for indicating which part you should care most:
 
 ![](https://user-images.githubusercontent.com/13421694/236665125-4968558b-8601-43d0-9618-97e146f93749.svg)
+
+And leave a comment for helping evaluations.
+
+<img width="697" alt="image" src="https://user-images.githubusercontent.com/13421694/236666915-5d403e4a-9cc1-4364-afbe-363cf82e5e49.png">
 
 Based on [LSIF](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/), diffctx will not only
 analyse the lines contained by the diff, but also the full scope of your repo, and understand it well.
