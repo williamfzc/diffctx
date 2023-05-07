@@ -138,6 +138,23 @@ def process_json(input_json, output_csv):
             writer.writerow(row)
 
 
+def get_summary(input_json) -> str:
+    with open(input_json, "r") as f:
+        json_data = json.load(f)
+
+    file_list = FileList.parse_obj({"files": json_data})
+
+    affected_files = len(file_list.files)
+    affected_lines = sum([each.affectedLines for each in file_list.files])
+    affected_functions = sum([each.affectedFunctions for each in file_list.files])
+    affected_refs = sum([each.affectedReferences for each in file_list.files])
+
+    return f"This commit directly influences {affected_files} files, " \
+           f"{affected_lines} lines, " \
+           f"{affected_functions} functions. " \
+           f"Indirectly influences {affected_refs} functions. "
+
+
 def dot_to_svg(dot_file):
     svg_bytes = subprocess.check_output(["dot", "-Tsvg", dot_file])
     return svg_bytes
@@ -191,6 +208,8 @@ def main():
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
     process_json(json_result_file, csv_result_file)
+    diff_desc = f"Start from {before_sha} to {after_sha}."
+    summary = get_summary(json_result_file)
     md_table_raw = convert_csv_to_md(csv_result_file)
 
     # graph
@@ -199,6 +218,10 @@ def main():
 
     final_content = f"""
 ## [DiffCtx](https://github.com/williamfzc/diffctx) Report
+
+{diff_desc}
+
+{summary}
 
 {md_table_raw}
 """
