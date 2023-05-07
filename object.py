@@ -1,3 +1,5 @@
+import typing
+
 from pydantic import BaseModel, Field
 
 
@@ -18,3 +20,27 @@ class LineStat(BaseModel):
     lineNumber: int
     refScope: ReferenceScope = Field(alias="ref")
     funcScope: FuncReferenceScope = Field(alias="funcRef")
+
+
+class FileVertex(BaseModel):
+    fileName: str
+    affectedLinePercent: float
+    affectedFunctionPercent: float
+    affectedReferencePercent: float
+
+    affectedLinePercentRepr: str = ""
+    affectedFunctionPercentRepr: str = ""
+    affectedReferencePercentRepr: str = ""
+
+    affectedLines: int
+    totalLines: int
+
+    affectedFunctions: int
+    totalFunctions: int
+
+    affectedReferences: int
+    totalReferences: int
+
+
+class FileList(BaseModel):
+    files: typing.List[FileVertex]

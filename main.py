@@ -1,17 +1,15 @@
 import csv
+import json
 import os
-import pathlib
 import subprocess
 import sys
-import typing
 
 import openai
 from csvtomd import csv_to_table, md_table
 from loguru import logger
-from pydantic import parse_file_as
 
-from comment import send_comment, send_code_comments
-from object import LineStat
+from comment import send_comment
+from object import FileList
 
 user_dir = "/github/workspace"
 support_langs = {"golang", "python"}
@@ -64,6 +62,8 @@ def gen_diff(before_sha: str, after_sha: str):
             after_sha,
             "--outputCsv",
             csv_result_file,
+            "--outputJson",
+            json_result_file,
         ]
     )
 
@@ -97,31 +97,39 @@ def convert_csv_to_md(csv_file) -> str:
     return md_table_raw
 
 
-def process_csv(csv_file):
+def process_json(input_json, output_csv):
+    with open(input_json, "r") as f:
+        json_data = json.load(f)
+
+    file_list = FileList.parse_obj({"files": json_data})
+
+    def format_percentage(numerator, denominator):
+        percent = numerator / denominator * 100
+        return f"{percent:.2f}% ({numerator}/{denominator})"
+
+    for file in file_list.files:
+        file.affectedLinePercentRepr = format_percentage(file.affectedLines, file.totalLines)
+        file.affectedFunctionPercentRepr = format_percentage(file.affectedFunctions, file.totalFunctions)
+        file.affectedReferencePercentRepr = format_percentage(file.affectedReferences, file.totalReferences)
+
     cols = [
-        "fileName",
-        "affectedLinePercent",
-        "affectedFunctionPercent",
-        "affectedReferencePercent",
+        "FileName",
+        "AffectedLines",
+        "AffectedFunctions",
+        "AffectedReferences",
     ]
-    origin_cols = cols[:1]
-    data_cols = cols[1:]
-
-    with open(csv_file, newline='') as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-
-    with open(csv_file, "w", newline='') as f:
+    with open(output_csv, "w", newline='') as f:
         writer = csv.DictWriter(f, fieldnames=cols)
         writer.writeheader()
-        for each_row in rows:
-            row_dict = dict()
-            for each_col in origin_cols:
-                row_dict[each_col] = each_row[each_col]
-            for each_col in data_cols:
-                row_dict[each_col] = f"{round(float(each_row[each_col]) * 100, 2)}%"
 
-            writer.writerow(row_dict)
+        for file in file_list.files:
+            row = {
+                cols[0]: file.fileName,
+                cols[1]: file.affectedLinePercentRepr,
+                cols[2]: file.affectedFunctionPercentRepr,
+                cols[3]: file.affectedReferencePercentRepr,
+            }
+            writer.writerow(row)
 
 
 def main():
@@ -164,11 +172,11 @@ def main():
     logger.info(f"ai resp: {ai_content}")
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
-    process_csv(csv_result_file)
+    process_json(csv_result_file)
     md_table_raw = convert_csv_to_md(csv_result_file)
 
     final_content = f"""
-## DiffCtx Report
+## [DiffCtx](https://github.com/williamfzc/diffctx) Report
 
 {md_table_raw}
 """
