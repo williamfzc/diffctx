@@ -1,34 +1,29 @@
 # diffctx = diff context
 
-Auto code reviewer powered by GPT + LSIF. All in one GitHub Action.
-
 ## Showcase
+
+<img width="697" alt="image" src="https://user-images.githubusercontent.com/13421694/236666915-5d403e4a-9cc1-4364-afbe-363cf82e5e49.png">
 
 With a simple setup in your GitHub Action:
 
 ```yaml
 - name: diffctx
-  uses: williamfzc/diffctx@v0.1.4
+  uses: williamfzc/diffctx@v0.2.2
   with:
     lang: "golang"
-    openai_api_key: ${{ secrets.OPENAI_API_KEY }}
 ```
 
-Diffctx will automatically analyse the diff (**and the context of diff**) every new PullRequests in your repo, and leave comments for indicating which part you should care most:
+Diffctx will automatically analyse the diff (**and the context of diff**) every new PullRequests in your repo, and leave
+comments for indicating which part you should care most:
 
-<img width="628" alt="image" src="https://user-images.githubusercontent.com/13421694/232233602-f59f5d82-31dc-489b-8501-791faeff2db9.png">
+![](https://user-images.githubusercontent.com/13421694/236665125-4968558b-8601-43d0-9618-97e146f93749.svg)
 
-Based on [LSIF](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/), diffctx will not only analyse the lines contained by the diff, but also the full scope of your repo, and understand it well.
-
-So it can better evaluate your changes and give more accurate suggestions from a global perspective.
+Based on [LSIF](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/), diffctx will not only
+analyse the lines contained by the diff, but also the full scope of your repo, and understand it well.
 
 ## Usage
 
 diffctx can be directly used with GitHub Action.
-
-### Add OpenAI Api Key
-
-<img width="816" alt="image" src="https://user-images.githubusercontent.com/13421694/232230719-1d827367-d766-4cc7-95d0-e8a0c3adbea8.png">
 
 ### Add to GitHub Action
 
@@ -36,7 +31,7 @@ diffctx can be directly used with GitHub Action.
 name: Test PR
 
 # triggered by pull_request
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 # for creating comments
 permissions:
@@ -49,36 +44,40 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2
-      
+
       # ...
-      
+
       - name: diffctx
-        uses: williamfzc/diffctx@v0.1.4
+        uses: williamfzc/diffctx@v0.2.2
         with:
-          # currently we support: golang/java/python
+          # currently we support: golang/python
           lang: "golang"
-          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
 ```
 
 ### Done!
 
 You can create a new PullRequest for test.
 
+### Still have a problem?
+
+A real example can be found in: https://github.com/williamfzc/srctx/tree/test_diffctx
+
 ## How it works
 
 1. Scan the repo and understand it well
 2. Extract the sub graph influenced by the diff
 3. Generate a summary from sub graph
-4. Send the summary to AI for evaluation
-5. Create a comment
+4. Create a comment
 
-The 1-3 is finished by [srctx](https://github.com/williamfzc/srctx).
+## Supported Languages
 
-## Cost
+Thanks to tree-sitter and LSIF, diffctx can support nearly all the popular languages.
 
-Token is expensive. So we did not intend to let AI scan all the codes at the beginning, but advanced and standardized the calculation part through the parser.
-
-Everything can be done in one request. Which takes ~10s.
+| Languages | Status  |
+|-----------|---------|
+| Golang    | Done    |
+| Python    | Done    |
+| Java      | Working |
 
 ## Contribution
 
@@ -89,7 +88,7 @@ Issues, PRs and suggestions are welcome.
 
 ## Roadmap
 
-- Stable prompt
-- Send AI the necessary code to make better suggestions
+- More languages
 - Better comment format
 - Extract more meaningful columns (like function definition) from code
+- Display graph in comment also
