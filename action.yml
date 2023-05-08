@@ -1,6 +1,6 @@
 # action.yml
 name: 'diffctx'
-description: 'Smart diff context analysis powered by GPT + LSIF'
+description: 'A GitHub action for automatically evaluating the function level impacts of Pull Requests.'
 branding:
   color: 'green'
   icon: 'at-sign'
