@@ -2,23 +2,26 @@ import os
 
 from loguru import logger
 
-from diff import set_safe_git_dir
-from config import user_dir
 from utils import check_call
 
 
-def gen_index(lang: str):
-    set_safe_git_dir()
-    files = os.listdir(user_dir)
-    logger.info(f"files: {files}")
-
-    if lang == "golang":
-        gen_golang_index()
-    elif lang == "python":
-        gen_py_index()
-    else:
-        logger.error("no index mapping")
-        return
+def gen_index(lang: str, directory: str):
+    current_directory = os.getcwd()
+    try:
+        os.chdir(directory)
+        if lang == "golang":
+            gen_golang_index()
+        elif lang == "python":
+            gen_py_index()
+        elif lang == "java":
+            gen_java_and_kotlin_index()
+        elif lang == "kotlin":
+            gen_java_and_kotlin_index()
+        else:
+            logger.error("no index mapping")
+            return
+    finally:
+        os.chdir(current_directory)
 
 
 def gen_golang_index():

@@ -10,8 +10,15 @@ from loguru import logger
 
 from ai import process_with_ai
 from comment import send_comment
-from config import support_langs, csv_result_file, json_result_file, dot_result_file
-from diff import gen_diff
+from config import (
+    support_langs,
+    csv_result_file,
+    json_result_file,
+    dot_result_file,
+    user_dir,
+)
+from debug import debug_main
+from diff import gen_diff, set_safe_git_dir
 from index import gen_index
 from object import FileList
 
@@ -24,6 +31,13 @@ def main():
     repo_token = args[3]
     issue_number = args[4]
     openai_api_key = args[5]
+    debug_mode = args[6]
+    lsif_file = args[7]
+
+    if debug_mode:
+        logger.warning("in debug mode, start testing")
+        debug_main()
+        logger.warning("debug mode end")
 
     # check
     if lang not in support_langs:
@@ -38,8 +52,13 @@ def main():
         return
 
     # data prepare
-    gen_index(lang)
-    gen_diff(before_sha, after_sha)
+    set_safe_git_dir()
+    files = os.listdir(user_dir)
+    logger.info(f"files: {files}")
+
+    if not lsif_file:
+        gen_index(lang, user_dir)
+    gen_diff(before_sha, after_sha, lsif_file)
 
     with open(csv_result_file, encoding="utf-8") as f:
         content = f.read()

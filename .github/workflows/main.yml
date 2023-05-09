@@ -1,4 +1,4 @@
-on: [push, pull_request]
+on: [ push, pull_request ]
 
 permissions:
   pull-requests: write
@@ -13,17 +13,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Python Diff Context
+      - name: Test Action
         uses: ./
         with:
           lang: "python"
-
-      - name: Golang Diff Context
-        uses: ./
-        with:
-          lang: "golang"
-
-      - name: Java Diff Context
-        uses: ./
-        with:
-          lang: "java"
+          debug_mode: "true"

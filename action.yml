@@ -29,6 +29,14 @@ inputs:
     description: "api key for openai"
     default: ""
     required: false
+  debug_mode:
+    description: "enable debug mode if not empty"
+    default: ""
+    required: false
+  lsif_file:
+    description: "specific lsif file input"
+    default: ""
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'
@@ -39,3 +47,5 @@ runs:
     - ${{ inputs.repo_token }}
     - ${{ inputs.issue_number }}
     - ${{ inputs.openai_api_key }}
+    - ${{ inputs.debug_mode }}
+    - ${{ inputs.lsif_file }}
