@@ -13,8 +13,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Try Diff Context
+      - name: Python Diff Context
         uses: ./
         with:
           lang: "python"
-          openai_api_key: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Golang Diff Context
+        uses: ./
+        with:
+          lang: "golang"
+
+      - name: Java Diff Context
+        uses: ./
+        with:
+          lang: "java"
