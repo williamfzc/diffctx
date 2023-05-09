@@ -12,8 +12,7 @@ RUN apk add --no-cache python3 py3-pip && \
 # scip converter
 RUN curl -fLo scip-linux-amd64.tar.gz https://github.com/sourcegraph/scip/releases/download/v0.2.3/scip-linux-amd64.tar.gz \
   && tar xf ./scip-linux-amd64.tar.gz \
-  && chmod +x ./scip \
-  && ./scip --help
+  && chmod +x ./scip
 
 # java/kotlin/scala scip/lsif
 RUN apk add openjdk17 \
