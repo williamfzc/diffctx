@@ -37,6 +37,10 @@ inputs:
     description: "specific lsif file input"
     default: ""
     required: false
+  index_cmd:
+    description: "custom index command"
+    default: ""
+    required: false
 runs:
   using: 'docker'
   image: 'Dockerfile'

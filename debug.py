@@ -11,7 +11,7 @@ def debug_main():
     check_call(["git", "clone", "--depth=2", "https://github.com/gin-gonic/gin.git"])
     # check_call(["git", "clone", "--depth=2", "https://github.com/square/okhttp"])
 
-    gen_index("golang", "gin")
+    gen_index("golang", "gin", "")
     # gen_index("kotlin", "okhttp")
 
     os.chdir("gin")

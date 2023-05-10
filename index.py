@@ -5,10 +5,15 @@ from loguru import logger
 from utils import check_call
 
 
-def gen_index(lang: str, directory: str):
+def gen_index(lang: str, directory: str, index_command: str):
     current_directory = os.getcwd()
     try:
         os.chdir(directory)
+
+        if index_command:
+            logger.info(f"custom index command: {index_command}")
+            check_call(index_command.split(" "))
+
         if lang == "golang":
             gen_golang_index()
         elif lang == "python":

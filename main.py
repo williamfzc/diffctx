@@ -33,6 +33,7 @@ def main():
     openai_api_key = args[5]
     debug_mode = args[6]
     lsif_file = args[7]
+    index_command = args[8]
 
     if debug_mode:
         logger.warning("in debug mode, start testing")
@@ -57,7 +58,7 @@ def main():
     logger.info(f"files: {files}")
 
     if not lsif_file:
-        gen_index(lang, user_dir)
+        gen_index(lang, user_dir, index_command)
     gen_diff(before_sha, after_sha, lsif_file)
 
     with open(csv_result_file, encoding="utf-8") as f:
