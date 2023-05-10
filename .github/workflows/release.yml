@@ -1,12 +1,15 @@
-on: [ push, pull_request ]
+on:
+  push:
+    tags:
+      - '*'
 
 permissions:
   pull-requests: write
 
 jobs:
-  smoke_test:
+  release_test:
     runs-on: ubuntu-latest
-    name: Smoke Test
+    name: Release Test
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -17,3 +20,4 @@ jobs:
         uses: ./
         with:
           lang: "python"
+          debug_mode: "true"
