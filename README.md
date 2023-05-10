@@ -8,7 +8,7 @@ With a simple setup in your GitHub Action:
 
 ```yaml
 - name: diffctx
-  uses: williamfzc/diffctx@v0.2.2
+  uses: williamfzc/diffctx@v0.2.3
   with:
     lang: "golang"
 ```
@@ -52,7 +52,7 @@ jobs:
       # ...
 
       - name: diffctx
-        uses: williamfzc/diffctx@v0.2.2
+        uses: williamfzc/diffctx@v0.2.3
         with:
           # currently we officially support: golang/python
           lang: "golang"
@@ -65,11 +65,12 @@ You can create a new PullRequest for test.
 ### What about other languages?
 
 Currently, diffctx can also support java/kotlin.
-But you have to generate LSIF file ([this link](https://github.com/williamfzc/diffctx/blob/main/index.py) might help) by yourself because of the complexity of the compilation process.
+But you have to generate LSIF file ([this link](https://github.com/williamfzc/diffctx/blob/main/index.py) might help) by
+yourself because of the complexity of the compilation process.
 
 ```yml
 - name: diffctx
-  uses: williamfzc/diffctx@v0.2.2
+  uses: williamfzc/diffctx@v0.2.3
   with:
     lang: "java"
     lsif_file: "./dump.lsif"
@@ -92,11 +93,12 @@ A real example can be found in: https://github.com/williamfzc/srctx/tree/test_di
 
 Thanks to tree-sitter and LSIF, diffctx can support nearly all the popular languages.
 
-| Languages | Status  |
-|-----------|---------|
-| Golang    | Done    |
-| Python    | Done    |
-| Java      | Working |
+| Languages   | Status  |
+|-------------|---------|
+| Golang      | Done    |
+| Python      | Done    |
+| Java/Kotlin | Working |
+| JavaScript  | Working |
 
 ## Contribution
 
