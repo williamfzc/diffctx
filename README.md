@@ -54,13 +54,28 @@ jobs:
       - name: diffctx
         uses: williamfzc/diffctx@v0.2.2
         with:
-          # currently we support: golang/python
+          # currently we officially support: golang/python
           lang: "golang"
 ```
 
 ### Done!
 
 You can create a new PullRequest for test.
+
+### What about other languages?
+
+Currently, diffctx can also support java/kotlin.
+But you have to generate LSIF file ([this link](https://github.com/williamfzc/diffctx/blob/main/index.py) might help) by yourself because of the complexity of the compilation process.
+
+```yml
+- name: diffctx
+  uses: williamfzc/diffctx@v0.2.2
+  with:
+    lang: "java"
+    lsif_file: "./dump.lsif"
+```
+
+Help wanted :)
 
 ### Still have a problem?
 
