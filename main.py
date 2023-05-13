@@ -10,13 +10,7 @@ from loguru import logger
 
 from ai import process_with_ai
 from comment import send_comment
-from config import (
-    support_langs,
-    csv_result_file,
-    json_result_file,
-    dot_result_file,
-    user_dir,
-)
+import config
 from debug import debug_main
 from diff import gen_diff, set_safe_git_dir
 from index import gen_index
@@ -24,6 +18,8 @@ from object import FileList
 
 
 def main():
+    # locally run
+    # python3 main.py golang HEAD~1 HEAD "" "" "" "" ./dump.lsif ""
     args = sys.argv[1:]
     lang = args[0]
     before_sha = args[1]
@@ -41,27 +37,27 @@ def main():
         logger.warning("debug mode end")
 
     # check
-    if lang not in support_langs:
-        logger.error(f"lang not supported: {lang}, supported: {support_langs}")
+    if lang not in config.SUPPORT_LANGS:
+        logger.error(f"lang not supported: {lang}, supported: {config.SUPPORT_LANGS}")
         return
     if not before_sha or not after_sha:
         logger.warning("sha empty. Use default.")
         before_sha = "HEAD~1"
         after_sha = "HEAD"
     if not repo_token:
-        logger.error("no repo token provided")
-        return
+        logger.warning("no repo token provided, run locally")
+        config.USER_DIR = "."
 
     # data prepare
     set_safe_git_dir()
-    files = os.listdir(user_dir)
+    files = os.listdir(config.USER_DIR)
     logger.info(f"files: {files}")
 
     if not lsif_file:
-        gen_index(lang, user_dir, index_command)
+        gen_index(lang, config.USER_DIR, index_command)
     gen_diff(before_sha, after_sha, lsif_file)
 
-    with open(csv_result_file, encoding="utf-8") as f:
+    with open(config.CSV_RESULT_FILE, encoding="utf-8") as f:
         content = f.read()
 
     ai_content = "-"
@@ -76,13 +72,13 @@ def main():
     logger.info(f"ai resp: {ai_content}")
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
-    process_json(json_result_file, csv_result_file)
+    process_json(config.JSON_RESULT_FILE, config.CSV_RESULT_FILE)
     diff_desc = f"Start from {before_sha} to {after_sha}."
-    summary = get_summary(json_result_file)
-    md_table_raw = convert_csv_to_md(csv_result_file)
+    summary = get_summary(config.JSON_RESULT_FILE)
+    md_table_raw = convert_csv_to_md(config.CSV_RESULT_FILE)
 
     # graph
-    svg_bytes = dot_to_svg(dot_result_file)
+    svg_bytes = dot_to_svg(config.DOT_RESULT_FILE)
     # todo: have no idea about how to display this graph in comment without any extra servers
 
     final_content = f"""

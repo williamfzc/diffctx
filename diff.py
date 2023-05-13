@@ -1,4 +1,4 @@
-from config import user_dir, csv_result_file, json_result_file, dot_result_file
+import config
 from utils import check_call
 
 
@@ -10,17 +10,17 @@ def gen_diff(before_sha: str, after_sha: str, lsif_file: str):
         "srctx",
         "diff",
         "--src",
-        user_dir,
+        config.USER_DIR,
         "--before",
         before_sha,
         "--after",
         after_sha,
         "--outputCsv",
-        csv_result_file,
+        config.CSV_RESULT_FILE,
         "--outputJson",
-        json_result_file,
+        config.JSON_RESULT_FILE,
         "--outputDot",
-        dot_result_file,
+        config.DOT_RESULT_FILE,
     ]
     if lsif_file:
         cmds += ["--lsif", lsif_file]
@@ -28,4 +28,6 @@ def gen_diff(before_sha: str, after_sha: str, lsif_file: str):
 
 
 def set_safe_git_dir():
-    check_call(["git", "config", "--global", "--add", "safe.directory", user_dir])
+    check_call(
+        ["git", "config", "--global", "--add", "safe.directory", config.USER_DIR]
+    )
