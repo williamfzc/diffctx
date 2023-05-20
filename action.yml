@@ -53,3 +53,4 @@ runs:
     - ${{ inputs.openai_api_key }}
     - ${{ inputs.debug_mode }}
     - ${{ inputs.lsif_file }}
+    - ${{ inputs.index_cmd }}

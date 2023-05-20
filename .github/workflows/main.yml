@@ -17,3 +17,4 @@ jobs:
         uses: ./
         with:
           lang: "python"
+          debug_mode: "true"
