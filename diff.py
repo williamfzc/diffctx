@@ -15,10 +15,10 @@ def gen_diff(before_sha: str, after_sha: str, lsif_file: str):
         before_sha,
         "--after",
         after_sha,
-        "--outputCsv",
-        config.CSV_RESULT_FILE,
         "--outputJson",
         config.JSON_RESULT_FILE,
+        "--outputCsv",
+        config.CSV_RESULT_FILE,
     ]
     if lsif_file:
         cmds += ["--lsif", lsif_file]

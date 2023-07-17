@@ -22,25 +22,22 @@ class LineStat(BaseModel):
     funcScope: FuncReferenceScope = Field(alias="funcRef")
 
 
-class FileVertex(BaseModel):
+class FileMetrics(BaseModel):
     fileName: str
-    affectedLinePercent: float
-    affectedFunctionPercent: float
-    affectedReferencePercent: float
+    unitName: str
+    directConnectCount: int
+    inDirectConnectCount: int
+    totalUnitCount: int
+    affectedEntries: int
+    totalEntriesCount: int
+    affectedLineCount: int
+    totalLineCount: int
 
+    # extras
     affectedLinePercentRepr: str = ""
-    affectedFunctionPercentRepr: str = ""
-    affectedReferencePercentRepr: str = ""
-
-    affectedLines: int
-    totalLines: int
-
-    affectedFunctions: int
-    totalFunctions: int
-
-    affectedReferences: int
-    totalReferences: int
+    affectedDirectConnectRepr: str = ""
+    affectIndirectConnectRepr: str = ""
 
 
-class FileList(BaseModel):
-    files: typing.List[FileVertex]
+class MetricsResponse(BaseModel):
+    data: typing.List[FileMetrics]

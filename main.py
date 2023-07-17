@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import sys
+import typing
 
 from csvtomd import csv_to_table, md_table
 from loguru import logger
@@ -12,7 +13,7 @@ from comment import send_comment
 from debug import debug_main
 from diff import gen_diff, set_safe_git_dir
 from index import gen_index
-from object import FileList
+from object import MetricsResponse as FileList, FileMetrics
 
 
 def main():
@@ -56,15 +57,16 @@ def main():
     gen_diff(before_sha, after_sha, lsif_file)
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
-    process_json(config.JSON_RESULT_FILE, config.CSV_RESULT_FILE)
-    diff_desc = f"Start from {before_sha} to {after_sha}."
-    summary = get_summary(config.JSON_RESULT_FILE)
+    file_list = load_index_data()
+
+    export_csv_table(file_list, config.CSV_RESULT_FILE)
+    summary = get_summary(file_list)
     md_table_raw = convert_csv_to_md(config.CSV_RESULT_FILE)
 
     final_content = f"""
 ## [DiffCtx](https://github.com/williamfzc/diffctx) Report
 
-{diff_desc}
+Start from {before_sha} to {after_sha}.
 
 {summary}
 
@@ -92,65 +94,71 @@ def convert_csv_to_md(csv_file) -> str:
     return md_table_raw
 
 
-def process_json(input_json, output_csv):
-    with open(input_json, "r") as f:
-        json_data = json.load(f)
-
-    file_list = FileList.parse_obj({"files": json_data})
-
+def export_csv_table(file_list: typing.List[FileMetrics], output_csv):
     def format_percentage(numerator, denominator):
         percent = numerator / denominator * 100
         return f"{percent:.2f}% ({numerator}/{denominator})"
 
-    for file in file_list.files:
+    for file in file_list:
         file.affectedLinePercentRepr = format_percentage(
-            file.affectedLines, file.totalLines
+            file.affectedLineCount, file.totalLineCount
         )
-        file.affectedFunctionPercentRepr = format_percentage(
-            file.affectedFunctions, file.totalFunctions
+        file.affectedDirectConnectRepr = format_percentage(
+            file.directConnectCount, file.totalUnitCount
         )
-        file.affectedReferencePercentRepr = format_percentage(
-            file.affectedReferences, file.totalReferences
+        file.affectIndirectConnectRepr = format_percentage(
+            file.inDirectConnectCount, file.totalUnitCount
         )
 
-    file_list.files = sort_files_by_impact(file_list.files)
+    file_list = sort_files_by_impact(file_list)
 
     cols = [
         "FileName",
         "AffectedLines",
-        "AffectedFunctions",
-        "AffectedReferences",
+        "DirectConnect",
+        "IndirectConnect",
     ]
     with open(output_csv, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=cols)
         writer.writeheader()
 
-        for file in file_list.files:
+        for file in file_list:
             row = {
                 cols[0]: file.fileName,
                 cols[1]: file.affectedLinePercentRepr,
-                cols[2]: file.affectedFunctionPercentRepr,
-                cols[3]: file.affectedReferencePercentRepr,
+                cols[2]: file.affectedDirectConnectRepr,
+                cols[3]: file.affectIndirectConnectRepr,
             }
             writer.writerow(row)
 
 
-def get_summary(input_json) -> str:
-    with open(input_json, "r") as f:
+def load_index_data() -> typing.List[FileMetrics]:
+    with open(config.JSON_RESULT_FILE, "r") as f:
         json_data = json.load(f)
 
-    file_list = FileList.parse_obj({"files": json_data})
+    file_list = FileList.parse_obj({"data": json_data})
+    return file_list.data
 
-    affected_files = len(file_list.files)
-    affected_lines = sum([each.affectedLines for each in file_list.files])
-    affected_functions = sum([each.affectedFunctions for each in file_list.files])
-    affected_refs = sum([each.affectedReferences for each in file_list.files])
+
+def get_summary(metrics: typing.List[FileMetrics]) -> str:
+    affected_files = len(metrics)
+
+    affected_lines = sum([each.affectedLineCount for each in metrics])
+    total_lines = sum([each.totalLineCount for each in metrics]) / affected_files
+
+    affected_entries = sum([each.affectedEntries for each in metrics])
+    total_entries = sum([each.totalEntriesCount for each in metrics]) / affected_files
+
+    affected_refs = sum(
+        [(each.directConnectCount + each.inDirectConnectCount) for each in metrics]
+    )
+    total_refs = sum([each.totalUnitCount for each in metrics]) / affected_files
 
     return (
         f"This commit directly influences {affected_files} files, "
-        f"{affected_lines} lines, "
-        f"{affected_functions} functions. "
-        f"Indirectly influences {affected_refs} functions. "
+        f"{affected_lines} / ${total_lines} lines, "
+        f"indirectly influences ${affected_refs} / ${total_refs} files, "
+        f"{affected_entries} / ${total_entries} entries."
     )
 
 
@@ -159,9 +167,9 @@ def dot_to_svg(dot_file):
     return svg_bytes
 
 
-def sort_files_by_impact(files):
-    def sort_key(f):
-        return f.affectedLines
+def sort_files_by_impact(files: typing.Iterable[FileMetrics]) -> typing.List[FileMetrics]:
+    def sort_key(f: FileMetrics):
+        return f.affectedLineCount
 
     return sorted(files, key=sort_key, reverse=True)
 
