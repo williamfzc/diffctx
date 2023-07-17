@@ -48,9 +48,9 @@ def send_code_comments(
             # todo: 443 failed
             # https://github.com/PyGithub/PyGithub/issues/2501
 
-            # pr.create_review_comment(
-            #     f"[diffctx] cross file reference: {each_line.refScope.crossFileRefCount}",
-            #     commit_id,
-            #     each_line.fileName,
-            #     each_line.lineNumber,
-            # )
+            pr.create_review_comment(
+                f"[diffctx] cross file reference: {each_line.refScope.crossFileRefCount}",
+                commit_id,
+                each_line.fileName,
+                each_line.lineNumber,
+            )

@@ -77,10 +77,6 @@ def main():
     summary = get_summary(config.JSON_RESULT_FILE)
     md_table_raw = convert_csv_to_md(config.CSV_RESULT_FILE)
 
-    # graph
-    svg_bytes = dot_to_svg(config.DOT_RESULT_FILE)
-    # todo: have no idea about how to display this graph in comment without any extra servers
-
     final_content = f"""
 ## [DiffCtx](https://github.com/williamfzc/diffctx) Report
 
