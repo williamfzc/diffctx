@@ -141,24 +141,27 @@ def load_index_data() -> typing.List[FileMetrics]:
 
 
 def get_summary(metrics: typing.List[FileMetrics]) -> str:
+    if not metrics:
+        return ""
+
     affected_files = len(metrics)
 
     affected_lines = sum([each.affectedLineCount for each in metrics])
-    total_lines = sum([each.totalLineCount for each in metrics]) / affected_files
+    total_lines = sum([each.totalLineCount for each in metrics])
 
     affected_entries = sum([each.affectedEntries for each in metrics])
-    total_entries = sum([each.totalEntriesCount for each in metrics]) / affected_files
+    total_entries = metrics[0].totalEntriesCount
 
     affected_refs = sum(
-        [(each.directConnectCount + each.inDirectConnectCount) for each in metrics]
+        [each.inDirectConnectCount for each in metrics]
     )
-    total_refs = sum([each.totalUnitCount for each in metrics]) / affected_files
+    total_refs = metrics[0].totalUnitCount
 
     return (
         f"This commit directly influences {affected_files} files, "
-        f"{affected_lines} / ${total_lines} lines, "
-        f"indirectly influences ${affected_refs} / ${total_refs} files, "
-        f"{affected_entries} / ${total_entries} entries."
+        f"{affected_lines} / {total_lines} lines, "
+        f"indirectly influences {affected_refs} / {total_refs} files, "
+        f"{affected_entries} / {total_entries} entries."
     )
 
 
