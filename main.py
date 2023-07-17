@@ -4,13 +4,11 @@ import os
 import subprocess
 import sys
 
-import openai
 from csvtomd import csv_to_table, md_table
 from loguru import logger
 
-from ai import process_with_ai
-from comment import send_comment
 import config
+from comment import send_comment
 from debug import debug_main
 from diff import gen_diff, set_safe_git_dir
 from index import gen_index
@@ -56,20 +54,6 @@ def main():
     if not lsif_file:
         gen_index(lang, config.USER_DIR, index_command)
     gen_diff(before_sha, after_sha, lsif_file)
-
-    with open(config.CSV_RESULT_FILE, encoding="utf-8") as f:
-        content = f.read()
-
-    ai_content = "-"
-    if not openai_api_key:
-        logger.warning("no openai api key found. Use raw data.")
-    else:
-        logger.info("process with openai")
-        openai.api_key = openai_api_key
-        ai_content = process_with_ai(content)
-
-    # todo: add to feedback?
-    logger.info(f"ai resp: {ai_content}")
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
     process_json(config.JSON_RESULT_FILE, config.CSV_RESULT_FILE)
