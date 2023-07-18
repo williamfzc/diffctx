@@ -48,13 +48,13 @@ def main():
         config.USER_DIR = "."
 
     # data prepare
-    set_safe_git_dir()
+    set_safe_git_dir(config.USER_DIR)
     files = os.listdir(config.USER_DIR)
     logger.info(f"files: {files}")
 
     if not lsif_file:
         gen_index(lang, config.USER_DIR, index_command)
-    gen_diff(before_sha, after_sha, lsif_file)
+    gen_diff(config.USER_DIR, before_sha, after_sha, lsif_file)
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
     file_list = load_index_data()
@@ -160,7 +160,9 @@ def dot_to_svg(dot_file):
     return svg_bytes
 
 
-def sort_files_by_impact(files: typing.Iterable[FileMetrics]) -> typing.List[FileMetrics]:
+def sort_files_by_impact(
+        files: typing.Iterable[FileMetrics],
+) -> typing.List[FileMetrics]:
     def sort_key(f: FileMetrics):
         return f.affectedLineCount
 

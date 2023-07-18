@@ -13,6 +13,7 @@ def gen_index(lang: str, directory: str, index_command: str):
         if index_command:
             logger.info(f"custom index command: {index_command}")
             check_call(index_command.split(" "))
+            return
 
         if lang == "golang":
             gen_golang_index()
@@ -22,9 +23,10 @@ def gen_index(lang: str, directory: str, index_command: str):
             gen_java_and_kotlin_index()
         elif lang == "kotlin":
             gen_java_and_kotlin_index()
+        elif lang == "node":
+            gen_node_index()
         else:
-            logger.error("no index mapping")
-            return
+            raise RuntimeError(f"lang {lang} not support")
     finally:
         os.chdir(current_directory)
 
@@ -36,9 +38,21 @@ def gen_golang_index():
 def gen_java_and_kotlin_index():
     # https://sourcegraph.github.io/scip-java/docs/getting-started.html#run-scip-java-index
     check_call(["scip-java", "index", "--output", "index.scip"])
-    # https://github.com/sourcegraph/scip/blob/main/docs/CLI.md
-    check_call(["scip", "convert", "--from", "index.scip", "--to", "dump.lsif"])
 
 
 def gen_py_index():
-    check_call(["lsif-py", ".", "--file", "./dump.lsif"])
+    check_call(["scip-python", "index", ".", "--project-name", "srctx"])
+
+
+def gen_node_index():
+    check_call(
+        [
+            "lsif",
+            "tsc",
+            "-p",
+            "./tsconfig.json",
+            "--package",
+            "./package.json",
+            "--stdout",
+        ]
+    )

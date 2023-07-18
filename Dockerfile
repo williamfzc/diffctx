@@ -4,11 +4,6 @@ RUN apk add --no-cache graphviz curl git
 
 COPY . /action_internal
 
-# python lsif
-RUN apk add --no-cache python3 py3-pip && \
-    pip3 install -r /action_internal/requirements.txt && \
-    pip3 install --upgrade git+https://github.com/sourcegraph/lsif-py.git
-
 # scip converter
 RUN git clone https://github.com/sourcegraph/scip.git --depth=1 ./scip_repo && \
     cd scip_repo && \
@@ -25,6 +20,15 @@ RUN apk add openjdk8 gradle maven \
   && chmod +x coursier \
   && ./coursier bootstrap --standalone -o scip-java com.sourcegraph:scip-java_2.13:0.8.18 --main com.sourcegraph.scip_java.ScipJava \
   && ./scip-java --help
+
+# node lsif and python scip
+RUN apk add --update nodejs npm \
+  && npm install -g lsif \
+  && npm install -g @sourcegraph/scip-python
+
+# python runtime for main script
+RUN apk add --no-cache python3 py3-pip && \
+    pip3 install -r /action_internal/requirements.txt
 
 ENV JAVA_HOME=/usr/lib/jvm/java-8-openjdk
 

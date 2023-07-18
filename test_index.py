@@ -1,4 +1,3 @@
-from index import gen_index
 from main import export_csv_table, load_index_data
 
 
