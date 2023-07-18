@@ -113,10 +113,10 @@ def export_csv_table(file_list: typing.List[FileMetrics], output_csv):
     file_list = sort_files_by_impact(file_list)
 
     cols = [
-        "FileName",
-        "AffectedLines",
-        "DirectConnect",
-        "IndirectConnect",
+        "File Name",
+        "Affected Lines",
+        "Direct Impact",
+        "Indirect Impact",
     ]
     with open(output_csv, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=cols)
@@ -149,19 +149,9 @@ def get_summary(metrics: typing.List[FileMetrics]) -> str:
     affected_lines = sum([each.affectedLineCount for each in metrics])
     total_lines = sum([each.totalLineCount for each in metrics])
 
-    affected_entries = sum([each.affectedEntries for each in metrics])
-    total_entries = metrics[0].totalEntriesCount
-
-    affected_refs = sum(
-        [each.inDirectConnectCount for each in metrics]
-    )
-    total_refs = metrics[0].totalUnitCount
-
     return (
         f"This commit directly influences {affected_files} files, "
-        f"{affected_lines} / {total_lines} lines, "
-        f"indirectly influences {affected_refs} / {total_refs} files, "
-        f"{affected_entries} / {total_entries} entries."
+        f"{affected_lines} / {total_lines} lines."
     )
 
 
