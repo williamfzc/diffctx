@@ -18,17 +18,16 @@ from object import MetricsResponse as FileList, FileMetrics
 
 def main():
     # locally run
-    # python3 main.py golang HEAD~1 HEAD "" "" "" "" ./dump.lsif ""
+    # python3 main.py golang HEAD~1 HEAD "" "" "" ./dump.lsif ""
     args = sys.argv[1:]
     lang = args[0]
     before_sha = args[1]
     after_sha = args[2]
     repo_token = args[3]
     issue_number = args[4]
-    openai_api_key = args[5]
-    debug_mode = args[6]
-    lsif_file = args[7]
-    index_command = args[8]
+    debug_mode = args[5]
+    lsif_file = args[6]
+    index_command = args[7]
 
     if debug_mode:
         logger.warning("in debug mode, start testing")

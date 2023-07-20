@@ -25,10 +25,6 @@ inputs:
     description: "issue number"
     default: "${{ github.event.number }}"
     required: false
-  openai_api_key:
-    description: "api key for openai"
-    default: ""
-    required: false
   debug_mode:
     description: "enable debug mode if not empty"
     default: ""
@@ -50,7 +46,6 @@ runs:
     - ${{ inputs.after_sha }}
     - ${{ inputs.repo_token }}
     - ${{ inputs.issue_number }}
-    - ${{ inputs.openai_api_key }}
     - ${{ inputs.debug_mode }}
     - ${{ inputs.lsif_file }}
     - ${{ inputs.index_cmd }}
