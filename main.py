@@ -81,10 +81,6 @@ Start from {before_sha} to {after_sha}.
         return
     send_comment(repo_token, repo_name, int(issue_number), final_content)
 
-    # # code comments
-    # lines = parse_file_as(typing.List[LineStat], pathlib.Path(json_result_file))
-    # send_code_comments(repo_token, after_sha, repo_name, int(issue_number), lines)
-
 
 def convert_csv_to_md(csv_file) -> str:
     with open(csv_file, "r") as f:
@@ -160,7 +156,7 @@ def dot_to_svg(dot_file):
 
 
 def sort_files_by_impact(
-        files: typing.Iterable[FileMetrics],
+    files: typing.Iterable[FileMetrics],
 ) -> typing.List[FileMetrics]:
     def sort_key(f: FileMetrics):
         return f.affectedLineCount

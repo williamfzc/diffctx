@@ -38,6 +38,4 @@ def gen_diff(src_dir: str, before_sha: str, after_sha: str, lsif_file: str):
 
 
 def set_safe_git_dir(src_dir: str):
-    check_call(
-        ["git", "config", "--global", "--add", "safe.directory", src_dir]
-    )
+    check_call(["git", "config", "--global", "--add", "safe.directory", src_dir])
