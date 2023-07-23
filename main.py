@@ -13,7 +13,7 @@ from comment import send_comment
 from debug import debug_main
 from diff import gen_diff, set_safe_git_dir
 from index import gen_index
-from object import MetricsResponse as FileList, FileMetrics
+from object import MetricsResponse as FileList, FileMetrics, StatGlobal
 
 
 def main():
@@ -57,9 +57,10 @@ def main():
 
     repo_name = os.getenv("GITHUB_REPOSITORY")
     file_list = load_index_data()
+    summary_data = load_summary_data()
 
-    export_csv_table(file_list, config.CSV_RESULT_FILE)
-    summary = get_summary(file_list)
+    export_csv_table(summary_data, file_list, config.CSV_RESULT_FILE)
+    summary = get_summary(summary_data, file_list)
     md_table_raw = convert_csv_to_md(config.CSV_RESULT_FILE)
 
     final_content = f"""
@@ -89,20 +90,20 @@ def convert_csv_to_md(csv_file) -> str:
     return md_table_raw
 
 
-def export_csv_table(file_list: typing.List[FileMetrics], output_csv):
+def export_csv_table(stat: StatGlobal, file_list: typing.List[FileMetrics], output_csv):
     def format_percentage(numerator, denominator):
         percent = numerator / denominator * 100
         return f"{percent:.2f}% ({numerator}/{denominator})"
 
     for file in file_list:
         file.affectedLinePercentRepr = format_percentage(
-            file.affectedLineCount, file.totalLineCount
+            file.impactLineCount, file.totalLineCount
         )
         file.affectedDirectConnectRepr = format_percentage(
-            file.directConnectCount, file.totalUnitCount
+            file.impactCount, len(stat.unitMapping)
         )
         file.affectIndirectConnectRepr = format_percentage(
-            file.inDirectConnectCount, file.totalUnitCount
+            file.transImpactCount, len(stat.unitMapping)
         )
 
     file_list = sort_files_by_impact(file_list)
@@ -135,13 +136,20 @@ def load_index_data() -> typing.List[FileMetrics]:
     return file_list.data
 
 
-def get_summary(metrics: typing.List[FileMetrics]) -> str:
+def load_summary_data() -> StatGlobal:
+    with open(config.STAT_JSON_RESULT_FILE, "r") as f:
+        json_data = json.load(f)
+
+    return StatGlobal.parse_obj(json_data)
+
+
+def get_summary(stat: StatGlobal, metrics: typing.List[FileMetrics]) -> str:
     if not metrics:
         return ""
 
     affected_files = len(metrics)
 
-    affected_lines = sum([each.affectedLineCount for each in metrics])
+    affected_lines = sum([each.impactLineCount for each in metrics])
     total_lines = sum([each.totalLineCount for each in metrics])
 
     return (
@@ -159,7 +167,7 @@ def sort_files_by_impact(
     files: typing.Iterable[FileMetrics],
 ) -> typing.List[FileMetrics]:
     def sort_key(f: FileMetrics):
-        return f.affectedLineCount
+        return f.impactLineCount
 
     return sorted(files, key=sort_key, reverse=True)
 

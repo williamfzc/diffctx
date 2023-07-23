@@ -18,8 +18,8 @@ def gen_diff(src_dir: str, before_sha: str, after_sha: str, lsif_file: str):
         after_sha,
         "--outputJson",
         config.JSON_RESULT_FILE,
-        "--outputCsv",
-        config.CSV_RESULT_FILE,
+        "--statJson",
+        config.STAT_JSON_RESULT_FILE,
     ]
     if not lsif_file:
         lsif_file_loc = pathlib.Path(src_dir) / "dump.lsif"
