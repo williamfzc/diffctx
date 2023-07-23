@@ -147,14 +147,11 @@ def get_summary(stat: StatGlobal, metrics: typing.List[FileMetrics]) -> str:
     if not metrics:
         return ""
 
-    affected_files = len(metrics)
-
-    affected_lines = sum([each.impactLineCount for each in metrics])
-    total_lines = sum([each.totalLineCount for each in metrics])
-
     return (
-        f"This commit directly influences {affected_files} files, "
-        f"{affected_lines} / {total_lines} lines."
+        f"This PullRequest changes {len(metrics)}/{len(stat.unitMapping)} files, "
+        f"possibly impacts {len(stat.impactUnits)}/{len(stat.unitMapping)} files, "
+        f"possibly transitive impacts {len(stat.transImpactUnits)}/{len(stat.unitMapping)} files, "
+        f"possibly impacts {len(stat.impactEntries)}/{len(stat.entries)} entries."
     )
 
 
@@ -164,7 +161,7 @@ def dot_to_svg(dot_file):
 
 
 def sort_files_by_impact(
-    files: typing.Iterable[FileMetrics],
+        files: typing.Iterable[FileMetrics],
 ) -> typing.List[FileMetrics]:
     def sort_key(f: FileMetrics):
         return f.impactLineCount
