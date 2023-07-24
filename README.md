@@ -1,6 +1,6 @@
 # diffctx = diff context
 
-A GitHub action for automatically evaluating the function level impacts of Pull Requests.
+A GitHub action for automatically evaluating the logic level impacts of Pull Requests.
 
 ## Showcase
 
@@ -20,7 +20,7 @@ comments for indicating which part you should care most:
 
 And leave a comment for helping evaluations.
 
-<img width="697" alt="image" src="https://user-images.githubusercontent.com/13421694/236666915-5d403e4a-9cc1-4364-afbe-363cf82e5e49.png">
+<img width="952" alt="image" src="https://github.com/williamfzc/diffctx/assets/13421694/63739d01-b7dc-4947-8e3d-2e6c5ed0530c">
 
 Based on [LSIF](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/), diffctx will not only
 analyse the lines contained by the diff, but also the full scope of your repo, and understand it well.
@@ -47,14 +47,20 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          # at least
           fetch-depth: 2
 
       # ...
 
       - name: diffctx
-        uses: williamfzc/diffctx@v0.2.3
+        uses: williamfzc/diffctx@v0.3.1
         with:
-          # currently we officially support: golang/python
+          # currently we officially support: 
+          # - golang
+          # - python
+          # - java
+          # - kotlin
+          # - node
           lang: "golang"
 ```
 
@@ -62,25 +68,9 @@ jobs:
 
 You can create a new PullRequest for test.
 
-### What about other languages?
-
-Currently, diffctx can also support java/kotlin.
-But you have to generate LSIF file ([this link](https://github.com/williamfzc/diffctx/blob/main/index.py) might help) by
-yourself because of the complexity of the compilation process.
-
-```yml
-- name: diffctx
-  uses: williamfzc/diffctx@v0.2.3
-  with:
-    lang: "java"
-    lsif_file: "./dump.lsif"
-```
-
-Help wanted :)
-
 ### Still have a problem?
 
-A real example can be found in: https://github.com/williamfzc/srctx/tree/test_diffctx
+A real example can be found in: https://github.com/williamfzc/srctx/pull/49
 
 ## How it works
 
@@ -93,23 +83,18 @@ A real example can be found in: https://github.com/williamfzc/srctx/tree/test_di
 
 Thanks to tree-sitter and LSIF, diffctx can support nearly all the popular languages.
 
-| Languages   | Status  |
-|-------------|---------|
-| Golang      | Done    |
-| Python      | Done    |
-| Java/Kotlin | Working |
-| JavaScript  | Working |
+https://lsif.dev/
 
 ## Contribution
 
-Issues, PRs and suggestions are welcome.
+Issues, PRs and suggestions are always welcome.
 
 - [diffctx](https://github.com/williamfzc/diffctx): for the whole workflow
 - [srctx](https://github.com/williamfzc/srctx): the core analyzer
 
 ## Roadmap
 
-- More languages
-- Better comment format
-- Extract more meaningful columns (like function definition) from code
-- Display graph in comment also
+- [ ] More languages
+- [ ] Better comment format
+- [ ] Extract more meaningful columns (like function definition) from code
+- [ ] Display graph in comment also
