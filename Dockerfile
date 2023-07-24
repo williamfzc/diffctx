@@ -7,7 +7,7 @@ COPY . /action_internal
 # scip converter
 RUN git clone https://github.com/sourcegraph/scip.git --depth=1 ./scip_repo && \
     cd scip_repo && \
-    go build -o scip ./cmd && \
+    go build -o scip ./cmd/scip && \
     cd .. && \
     cp ./scip_repo/scip . && \
     rm -rf ./scip_repo && \
