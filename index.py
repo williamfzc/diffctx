@@ -36,6 +36,10 @@ def gen_golang_index():
 
 
 def gen_java_and_kotlin_index():
+    # lock down JAVA_HOME
+    # https://github.com/orgs/community/discussions/25738
+    os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk"
+
     # https://sourcegraph.github.io/scip-java/docs/getting-started.html#run-scip-java-index
     check_call(["scip-java", "index", "--output", "index.scip"])
 

@@ -161,7 +161,7 @@ def dot_to_svg(dot_file):
 
 
 def sort_files_by_impact(
-        files: typing.Iterable[FileMetrics],
+    files: typing.Iterable[FileMetrics],
 ) -> typing.List[FileMetrics]:
     def sort_key(f: FileMetrics):
         return f.impactLineCount
