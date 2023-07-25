@@ -41,7 +41,7 @@ def gen_java_and_kotlin_index():
     os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk"
 
     # https://sourcegraph.github.io/scip-java/docs/getting-started.html#run-scip-java-index
-    check_call(["scip-java index --output index.scip"])
+    check_call("scip-java index --output index.scip")
 
 
 def gen_py_index():
