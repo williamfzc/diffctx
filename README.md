@@ -22,6 +22,8 @@ And leave a comment for helping evaluations.
 
 <img width="952" alt="image" src="https://github.com/williamfzc/diffctx/assets/13421694/63739d01-b7dc-4947-8e3d-2e6c5ed0530c">
 
+> https://github.com/williamfzc/srctx/pull/52
+
 Based on [LSIF](https://microsoft.github.io/language-server-protocol/overviews/lsif/overview/), diffctx will not only
 analyse the lines contained by the diff, but also the full scope of your repo, and understand it well.
 
@@ -55,12 +57,7 @@ jobs:
       - name: diffctx
         uses: williamfzc/diffctx@v0.3.1
         with:
-          # currently we officially support: 
-          # - golang
-          # - python
-          # - java
-          # - kotlin
-          # - node
+          # see the `Supported Langs` for details
           lang: "golang"
 ```
 
@@ -68,9 +65,25 @@ jobs:
 
 You can create a new PullRequest for test.
 
-### Still have a problem?
+## Supported Languages
 
-A real example can be found in: https://github.com/williamfzc/srctx/pull/49
+### Overview
+
+| Language | Ready? | Keyword in yaml | Demo                                                                                      |
+|----------|--------|-----------------|-------------------------------------------------------------------------------------------|
+| Golang   | ✅      | `golang`        | [ci.yaml](https://github.com/williamfzc/srctx/blob/test_diffctx/.github/workflows/ci.yml) |
+| Java     | ✅      | `java`          |                                                                                           |
+| Kotlin   | ✅      | `kotlin`        |                                                                                           |
+| NodeJs   | ✅      | `node`          |                                                                                           |
+| Python   | ✅      | `python`        |                                                                                           |
+
+### Want more langs?
+
+Thanks to tree-sitter and LSIF, diffctx can support nearly all the popular languages.
+
+https://lsif.dev/
+
+Adding a new language support is not hard. PullRequests are always welcome!
 
 ## How it works
 
@@ -78,12 +91,6 @@ A real example can be found in: https://github.com/williamfzc/srctx/pull/49
 2. Extract the sub graph influenced by the diff
 3. Generate a summary from sub graph
 4. Create a comment
-
-## Supported Languages
-
-Thanks to tree-sitter and LSIF, diffctx can support nearly all the popular languages.
-
-https://lsif.dev/
 
 ## Contribution
 
