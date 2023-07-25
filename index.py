@@ -12,7 +12,7 @@ def gen_index(lang: str, directory: str, index_command: str):
 
         if index_command:
             logger.info(f"custom index command: {index_command}")
-            check_call(index_command.split(" "))
+            check_call(index_command)
             return
 
         if lang == "golang":
@@ -41,7 +41,7 @@ def gen_java_and_kotlin_index():
     os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk"
 
     # https://sourcegraph.github.io/scip-java/docs/getting-started.html#run-scip-java-index
-    check_call(["scip-java", "index", "--output", "index.scip"])
+    check_call(["scip-java index --output index.scip"])
 
 
 def gen_py_index():
