@@ -1,5 +1,7 @@
 # diffctx = diff context
 
+[![Latest Release](https://img.shields.io/github/v/release/williamfzc/diffctx?include_prereleases)](https://github.com/williamfzc/diffctx/releases/latest)
+
 A GitHub action for automatically evaluating the logic level impacts of Pull Requests.
 
 ## Showcase
@@ -8,7 +10,7 @@ With a simple setup in your GitHub Action:
 
 ```yaml
 - name: diffctx
-  uses: williamfzc/diffctx@v0.2.3
+  uses: williamfzc/diffctx@v0.3.10
   with:
     lang: "golang"
 ```
@@ -20,7 +22,7 @@ comments for indicating which part you should care most:
 
 And leave a comment for helping evaluations.
 
-<img width="952" alt="image" src="https://github.com/williamfzc/diffctx/assets/13421694/63739d01-b7dc-4947-8e3d-2e6c5ed0530c">
+<img width="912" alt="image" src="https://github.com/williamfzc/srctx/assets/13421694/46de1eaa-efd2-496e-ba85-838e3da1063c">
 
 > https://github.com/williamfzc/srctx/pull/52
 
@@ -55,7 +57,7 @@ jobs:
       # ...
 
       - name: diffctx
-        uses: williamfzc/diffctx@v0.3.1
+        uses: williamfzc/diffctx@v0.3.10
         with:
           # see the `Supported Langs` for details
           lang: "golang"
@@ -69,13 +71,13 @@ You can create a new PullRequest for test.
 
 ### Overview
 
-| Language | Ready? | Keyword in yaml | Demo                                                                                      |
-|----------|--------|-----------------|-------------------------------------------------------------------------------------------|
-| Golang   | ✅      | `golang`        | [ci.yaml](https://github.com/williamfzc/srctx/blob/test_diffctx/.github/workflows/ci.yml) |
-| Java     | ✅      | `java`          |                                                                                           |
-| Kotlin   | ✅      | `kotlin`        |                                                                                           |
-| NodeJs   | ✅      | `node`          |                                                                                           |
-| Python   | ✅      | `python`        |                                                                                           |
+| Language | Ready? | Keyword in yaml | Real-world Sample                                                                                                 |
+|----------|--------|-----------------|-------------------------------------------------------------------------------------------------------------------|
+| Golang   | ✅      | `golang`        | [ci.yml](https://github.com/williamfzc/srctx/blob/test_diffctx/.github/workflows/ci.yml)                          |
+| Java     | ✅      | `java`          | [main.yml](https://github.com/williamfzc/java-diffctx-sample/blob/main/.github/workflows/main.yml)                |
+| Kotlin   | ✅🚧    | `kotlin`        | [build.yml](https://github.com/williamfzc/kt-diffctx-sample/blob/main/.github/workflows/build.yml)                |
+| NodeJs   | ✅      | `node`          | [build.yml](https://github.com/williamfzc/node-diffctx-sample/blob/master/.github/workflows/grpc-tools-build.yml) |
+| Python   | ✅      | `python`        | [run-test.yml](https://github.com/williamfzc/py-diffctx-sample/blob/main/.github/workflows/run-tests.yml)         |
 
 ### Want more langs?
 
