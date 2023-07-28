@@ -1,4 +1,4 @@
-FROM williamfzc/srctx:v0.10.2
+FROM williamfzc/srctx:v0.10.3
 
 RUN apk add --no-cache graphviz curl git
 
