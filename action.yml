@@ -39,7 +39,7 @@ inputs:
     required: false
 runs:
   using: 'docker'
-  image: 'williamfzc/diffctx:v0.3.11'
+  image: 'williamfzc/diffctx:v0.3.13'
   args:
     - ${{ inputs.lang }}
     - ${{ inputs.before_sha }}
