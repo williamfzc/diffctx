@@ -24,7 +24,8 @@ RUN apk add openjdk8 gradle maven \
 # node lsif and python scip
 RUN apk add --update nodejs npm \
   && npm install -g lsif \
-  && npm install -g @sourcegraph/scip-python
+  && npm install -g @sourcegraph/scip-python \
+  && npm install -g @sourcegraph/scip-typescript
 
 # python runtime for main script
 RUN apk add --no-cache python3 py3-pip && \
