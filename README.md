@@ -10,17 +10,13 @@ With a simple setup in your GitHub Action:
 
 ```yaml
 - name: diffctx
-  uses: williamfzc/diffctx@v0.3.10
+  uses: williamfzc/diffctx@v0.3.13
   with:
     lang: "golang"
 ```
 
 Diffctx will automatically analyse the diff (**and the context of diff**) every new PullRequests in your repo, and leave
 comments for indicating which part you should care most:
-
-![](https://user-images.githubusercontent.com/13421694/236665125-4968558b-8601-43d0-9618-97e146f93749.svg)
-
-And leave a comment for helping evaluations.
 
 <img width="912" alt="image" src="https://github.com/williamfzc/srctx/assets/13421694/46de1eaa-efd2-496e-ba85-838e3da1063c">
 
@@ -57,7 +53,7 @@ jobs:
       # ...
 
       - name: diffctx
-        uses: williamfzc/diffctx@v0.3.10
+        uses: williamfzc/diffctx@v0.3.13
         with:
           # see the `Supported Langs` for details
           lang: "golang"
@@ -66,6 +62,10 @@ jobs:
 ### Done!
 
 You can create a new PullRequest for test.
+
+Or test it with a push. You can find it in actions log.
+
+<img width="1046" alt="image" src="https://github.com/williamfzc/diffctx/assets/13421694/bd6370d5-c7d0-4530-949f-94a66770923a">
 
 ## Supported Languages
 
@@ -88,6 +88,8 @@ https://lsif.dev/
 Adding a new language support is not hard. PullRequests are always welcome!
 
 ## How it works
+
+![](https://user-images.githubusercontent.com/13421694/236665125-4968558b-8601-43d0-9618-97e146f93749.svg)
 
 1. Scan the repo and understand it well
 2. Extract the sub graph influenced by the diff
